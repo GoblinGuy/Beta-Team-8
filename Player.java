@@ -10,34 +10,46 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 public class Player {
-
+	//sets the bounds that the player can move in
 	private int upperY = 240;
 	private int upperX = 520;
 	private int lowerX = 40;
+	//unfortunately I forgot to make  one for bottomY, so the player can still down offscreen
+	
+	//Responsible for deciding what frame to draw to the screen(used in Update,and Draw)
 	private int frame = 0;
+	
+	//responsible for determining when a player is attacking, and direction
 	public boolean isAttacking;
 	public boolean facingLeft = false; 
 	
+	//meant to be used for attack animation cooldown(so that the player doesn't attack too soon)(subject to change)
 	private long startTime = 0;
 	private long endTime;
 	private long coolDown = 100000000000l;
 	
+	//Coordinate of player
 	public int x;
 	public int y;
 	
+	//Images that will be used in animation
 	BufferedImage playerImg, playerImg2, playerImg3, playerImgLeft, playerImgLeft2,playerImgLeft3, playerImgAttack, playerImgAttackLeft;
 	
-	public int playerWidth;
-	public int playerHeight;
+	//I didn't use these(but I'm guessing they could be for forcing the images to conform to a default size
+	//private int playerWidth; 
+	//private int playerHeight;
+	
+	//Look in the loadContent method(I just made this a separate thing for no reason)
 	File playerPath = new File("Images\\billy.png");
 	
+	//responsible for initializing the player's coordinates, and images
 	public Player()
 	{
 		Initialize();
 		LoadContent();
 		
 	}
-	
+
 	private void Initialize()
 	{
 		ResetPlayer();
@@ -71,6 +83,7 @@ public class Player {
 		y = 300;
 	}
 	
+	//Runs through enemyList, and sees if any of them are hitting player
 	public void checkHit(ArrayList<Enemy> mob)
 	{
 		for(Enemy em : mob)
@@ -83,6 +96,7 @@ public class Player {
 		
 	}
 	
+	//update player's position, or wether or not they're attacking through keyboard input
 	public void Update()
 	{
 		
