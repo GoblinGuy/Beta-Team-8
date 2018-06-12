@@ -49,7 +49,7 @@ public class Player {
 		LoadContent();
 		
 	}
-
+	
 	private void Initialize()
 	{
 		ResetPlayer();
@@ -100,11 +100,14 @@ public class Player {
 	public void Update()
 	{
 		
-		if(!Panel.isKeyboardEmpty())
+		if(!Panel.isKeyboardEmpty())//if no keys are being pressed, then frames should not be added(ie: movement animation)
 		{
-			if(Panel.keyboardKeyState(KeyEvent.VK_J))
+			if(Panel.keyboardKeyState(KeyEvent.VK_J)) //I set the J key as the attack button, but this subject to change 
 			{
-				if(startTime != 0)
+				//this if else block determines attack cooldown(but I have to make adjustments)
+				//Essentially it finds when the player attacks for the first time, and then next time the player attacks, that time is taken
+				//I set it so that isAttacking is only true if a certain amount of time has passed between button presses
+				if(startTime != 0) 
 				{
 					endTime = System.nanoTime();
 					isAttacking = Math.abs(startTime - endTime) > coolDown;
@@ -116,11 +119,14 @@ public class Player {
 					isAttacking = true;
 				}
 			}
-			else
+			else //if player is not attack, then it can move
 			{		
 				isAttacking = false;
+				//this if else block deals with player movement(after the player has moved, then frame increments(indicating movement)
 				if(Panel.keyboardKeyState(KeyEvent.VK_W) || Panel.keyboardKeyState(KeyEvent.VK_A) || Panel.keyboardKeyState(KeyEvent.VK_S) || Panel.keyboardKeyState(KeyEvent.VK_D) )
-				{
+				{	
+					//notice how these if statements except for the last (cuz I'm lazy) check to see if player has reached the bounds of the board
+
 					if(Panel.keyboardKeyState(KeyEvent.VK_W) && y > upperY)
 					{
 						
@@ -149,7 +155,9 @@ public class Player {
 						
 					}
 					frame++;
-					frame = frame % 6;
+					//since animation repeats, I used mod here
+					frame = frame % 6; // maybe in the future (change 6 into a varialbe(that keeps track of the number of images * 2(see reason why in Draw method))
+
 				}
 				
 			}
@@ -163,10 +171,13 @@ public class Player {
 			
 	}
 	
+	//Deals with drawing the player's movement and attack
 	public void Draw(Graphics2D g2d)
-	{
+	{	//if player is facing right, draw only the images that face right, else draw the flipped images
 		if (!facingLeft)
 		{
+			//In this switch case, I have twice as many cases as I have pictures(I do this so that the player's animation is slower to change
+			//having one case per image means that the player moves twice as fast despite covering the amount of distance(ie: it looks iffy)
 			switch(frame)
 			{
 				case 0:
@@ -186,7 +197,7 @@ public class Player {
 			if(isAttacking)
 			{
 				g2d.drawImage(playerImgAttack, x, y, null);
-				isAttacking = false;
+				isAttacking = false; //this is supposed to be here so that attack doesn't last as long, but I think its not working
 			}
 		}
 		else
