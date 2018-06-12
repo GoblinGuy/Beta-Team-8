@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-
+//pretty much a carbon copy of player except for update method, and the fact that it has a health bar
 public class Enemy {
 	
 	
@@ -18,15 +18,16 @@ public class Enemy {
 	private BufferedImage img;
 	private BufferedImage img2, img3;
 	private BufferedImage imgLeft, img2Left, img3Left,imgAttack, imgAttackLeft;
-	public boolean facingLeft;
 	
+	public boolean facingLeft;
 	public boolean isAttacking = false;
 	
 	
-	
+	//these find enemy's distance from player
 	public int xDistancefromP;
 	public int yDistancefromP;
 	
+	//enemy gets set coordinates from Game
 	public Enemy(int x, int y)
 	{
 		Initialize(x, y);
@@ -63,15 +64,17 @@ public class Enemy {
 		}
 	}
 	
-	
-	public void resetEnemy(int x, int y)
+	/**
+	public void resetEnemy(int x, int y) //might get rid of this method
 	{
 		health = 5;
 		this.x = x;
 		this.y = y;
 		
 	}
-	public boolean checkHit (Player player)
+	**/
+	//checkHit receives a copy of player and checks if its attacking, its direction, and distance
+	public boolean checkHit (Player player) 
 	{
 		if(player.facingLeft != this.facingLeft && player.isAttacking && Math.abs(player.x - this.x) <= 35 && Math.abs(player.y - this.y) <= 5 )
 		{
@@ -80,7 +83,8 @@ public class Enemy {
 		}
 		return false;
 	}
-
+	
+	//Updates the enemy's position
 	public void Update(int x, int y)
 	{
 		xDistancefromP = Math.abs(this.x - x);
