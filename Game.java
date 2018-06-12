@@ -9,27 +9,33 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+/**
+*Game class interacts with the objects on the screen, and decides when the level is done
+**/
 public class Game {
 
-	private Random randCoordinate ;
-	private Player player; 
-	private ArrayList<Enemy> enemyList;
+	private Random randCoordinate ; //will be used to generate the coordinates of new enemies
+	private Player player; //the player that will manipulated through the keyboard
+	private ArrayList<Enemy> enemyList; 
 	private int enemyCount = 3;  //changes depending on level
-	private int level;
+	private int level; //represents current level
 	private int levelMax = 5;
-	private boolean endOfLevel = false;
+	private boolean endOfLevel = false; //when all enemies have been defeated, this is set to true
 	
-	//maybe enemies later
 	
+	//list of backgrounds used during the course of the game (Only used two, but there are 5 levels
 	private BufferedImage backgroundImg1;
 	private BufferedImage backgroundImg2;
+	
+	
+	//represents the arrow that will be shown once a stage is over
 	private BufferedImage arrowImg;
 	
 	public Game()
 	{
-		//Framework.gameState = Framework.GameState.GAME_CONTENT_LOADING;
+		Framework.gameState = Framework.GameState.GAME_CONTENT_LOADING; //I'm working to get rid of this later
 		randCoordinate = new Random();
-		Thread threadForInitGame = new Thread()
+		Thread threadForInitGame = new Thread() //Essentially: starts the game(Look at Playing case in Framework to understand)
 				{
 					public void run()
 					{
@@ -43,16 +49,17 @@ public class Game {
 				
 				threadForInitGame.start();
 	}
-	
+	//loads up the game for the first time
 	public void Initialize()
 	{
 		player = new Player();
 		level = 1;
 		enemyList = new ArrayList<Enemy>();
-		generateEnemies();
+		generateEnemies(); //used to generate enemies based on the counter on enemyCount
 		
 	}
 	
+	//every new enemy generated will have a random coordinate(this doesn't exactly work as intetended right now, since the enemies display too far up)
 	public void generateEnemies()
 	{
 		for(int i = 0; i < enemyCount; i++)
@@ -60,7 +67,7 @@ public class Game {
 			enemyList.add( new Enemy(  randCoordinate.nextInt(((500 - 400) + 1) + 200) , randCoordinate.nextInt(((389 - 300) + 1) + 300)) );
 		}
 	}
-	
+	//Creates the images that will be used
 	public void LoadContent()
 	{
 		try
@@ -71,8 +78,8 @@ public class Game {
 		}
 		catch(IOException ex) { System.out.print("Error getting file");}
 	}
-	
-	public void UpdateGame(long gameTime)
+	//Framework calls it inside of its loop, if gameState is set to playing
+	public void UpdateGame(long gameTime) //TBH, not sure why gameTime is passed here(Still have to edit gameTime)
 	{
 		player.Update();
 		UpdateEnemies();
@@ -82,7 +89,7 @@ public class Game {
 		if(enemyList.isEmpty())
 		{
 			endOfLevel = true;
-			if(player.x >= 520 && level <= levelMax)
+			if(player.x >= 520 && level <= levelMax) //520 is just the outermost edge to the right(should probably be placed in a variable)
 			{
 				level++;
 				endOfLevel = false;
@@ -93,7 +100,8 @@ public class Game {
 		
 		
 	}
-	
+	//"Resets the enemyList with different amount of enemies(I don't know if we want more enemies in the higher stages
+	//I just had more enemies made for testing purposes
 	public void newLevel()
 	{
 		switch(level)
@@ -115,6 +123,7 @@ public class Game {
 		generateEnemies();
 	}
 	
+	//Every enemy gets updated(ie, they change position)
 	public void UpdateEnemies()
 	{
 		for(Enemy em : enemyList)
@@ -122,6 +131,8 @@ public class Game {
 			em.Update(player.x, player.y);
 		}
 	}
+	
+	//iterates through enemies and checks if they're hit, if they're did (ie if checkHit returns true) remove that enemy from the enemyList, so that its no longer updating
 	
 	public void isEnemyHit()
 	{
@@ -133,10 +144,10 @@ public class Game {
 		}
 	}
 	
-		
+	//responsible for drawing the enemies to the screen	
 	public void Draw(Graphics2D g2d)
 	{
-		switch(level)
+		switch(level) //draws a different background based on the level
 		{
 			case 1:
 				g2d.drawImage(backgroundImg1, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
@@ -146,14 +157,14 @@ public class Game {
 				break;
 		}
 		
-		if (endOfLevel)
+		if (endOfLevel) //draws the arrow(once all the enemies have been defeated
 		{
 			g2d.drawImage(arrowImg, 510, 100, 30, 50, null);
 		}
 		
 		player.Draw(g2d);
 		
-		for(Enemy em: enemyList)
+		for(Enemy em: enemyList) //and of course draws the enemies
 		{
 			em.Draw(g2d);
 		}
